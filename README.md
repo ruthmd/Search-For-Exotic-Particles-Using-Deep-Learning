@@ -5,7 +5,6 @@
 The problem at hand is a classification problem, where we need to distinguish between two processes,
 <br>
 1. Signal process
-<br>
 2. Background process
 <br>
 <br>
@@ -27,4 +26,4 @@ The data has been produced using Monte Carlo simulations. The first 21 features 
 The first column is the class label (1 for signal, 0 for background), followed by 21 low-level features then 7 high-level features.  All the attribute values are real values.
 <br>
 <br>
-The data can be obtained <a href="">here</a>. For more information on the data and the attributes, read the <a href="">original paper</a>.
+The data can be obtained <a href="https://archive.ics.uci.edu/ml/datasets/HIGGS">here</a>. For more information on the data and the attributes, read the <a href="https://arxiv.org/pdf/1402.4735.pdf">original paper</a>.
