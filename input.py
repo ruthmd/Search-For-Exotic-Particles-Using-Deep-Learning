@@ -6,9 +6,9 @@ import tensorflow as tf
 BATCH_SIZE = 32
 N_FEATURES = 28
 
-def batch_generator():
-    """ filenames is the list of files you want to read from.
-    In this case, it contains only heart.csv
+def batch_generator(batch_size=BATCH_SIZE):
+    """
+    returns a (data_batch, label_batch) tuple used to generate the batch data
     """
     filename_queue = tf.train.string_input_producer(['higgs.csv'])
     reader = tf.TextLineReader() # skip the first line in the file
@@ -16,16 +16,10 @@ def batch_generator():
 
     # record_defaults are the default values in case some of our columns are empty
     # This is also to tell tensorflow the format of our data (the type of the decode result)
-    # for this dataset, out of 9 feature columns,
-    # 8 of them are floats (some are integers, but to make our features homogenous,
-    # we consider them floats), and 1 is string (at position 5)
-    # the last column corresponds to the lable is an integer
 
     record_defaults = [[0.0] for _ in range(N_FEATURES+1)]
 
-    # read in the 10 rows of data
     content = tf.decode_csv(value, record_defaults=record_defaults)
-
 
     # pack all 28 features into a tensor
     features = tf.stack(content[:N_FEATURES])
@@ -36,34 +30,40 @@ def batch_generator():
     # minimum number elements in the queue after a dequeue, used to ensure
     # that the samples are sufficiently mixed
     # I think 10 times the BATCH_SIZE is sufficient
-    min_after_dequeue = 10 * BATCH_SIZE
+    min_after_dequeue = 10 * batch_size
 
     # the maximum number of elements in the queue
-    capacity = 20 * BATCH_SIZE
+    capacity = 20 * batch_size
 
     # shuffle the data to generate BATCH_SIZE sample pairs
-    data_batch, label_batch = tf.train.shuffle_batch([features, label], batch_size=BATCH_SIZE,
+    data_batch, label_batch = tf.train.shuffle_batch([features, label], batch_size=batch_size,
                                         capacity=capacity, min_after_dequeue=min_after_dequeue)
 
     return data_batch, label_batch
 
 def generate_batches(data_batch, label_batch):
+    '''
+    Returns a batch of data (32 samples) (features, labels)
+    '''
     with tf.Session() as sess:
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
-        for _ in range(2): # generate 10 batches
-            features, labels = sess.run([data_batch, label_batch])
-            print(features, labels)
+        features, labels = sess.run([data_batch, label_batch])
         coord.request_stop()
         coord.join(threads)
 
+    return features, labels
+
+
 def main():
-    data_batch, label_batch = batch_generator()
-    generate_batches(data_batch, label_batch)
-    print("New batch!")
-    data_batch, label_batch = batch_generator()
-    generate_batches(data_batch, label_batch)
-    print("New batch!")
+    data_batch, label_batch = batch_generator(batch_size=32)
+    features, labels = generate_batches(data_batch, label_batch)
+    print(features, labels)
+    # call these two functions every time you need 32 records(BATCH_SIZE) of data
+    # print("New batch!")
+    # data_batch, label_batch = batch_generator()
+    # generate_batches(data_batch, label_batch)
+    # print("New batch!")
 
 if __name__ == '__main__':
     main()
