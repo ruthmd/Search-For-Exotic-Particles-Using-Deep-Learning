@@ -11,7 +11,7 @@ def batch_generator(batch_size=BATCH_SIZE):
     """
     returns a (data_batch, label_batch) tuple used to generate the batch data
     """
-    filename_queue = tf.train.string_input_producer(['higgs.csv'])
+    filename_queue = tf.train.string_input_producer(['data/higgs.csv'])
     reader = tf.TextLineReader()
     _, value = reader.read(filename_queue)
 
@@ -37,8 +37,7 @@ def batch_generator(batch_size=BATCH_SIZE):
     capacity = 20 * batch_size
 
     # shuffle the data to generate BATCH_SIZE sample pairs
-    data_batch, label_batch = tf.train.shuffle_batch([features, label], batch_size=batch_size,
-                                                     capacity=capacity, min_after_dequeue=min_after_dequeue)
+    data_batch, label_batch = tf.train.shuffle_batch([features, label], batch_size=batch_size, capacity=capacity, min_after_dequeue=min_after_dequeue)
 
     return data_batch, label_batch
 
