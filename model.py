@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import os
 import tensorflow as tf
 
@@ -168,4 +167,3 @@ if __name__ == '__main__':
         output = forward_propagate(hidden_layers, output_layer)
         writer = tf.summary.FileWriter(LOG_DIR, sess.graph)
         writer.close()
->>>>>>> 294cd2c1300243e63729d9a751636172d481a951
