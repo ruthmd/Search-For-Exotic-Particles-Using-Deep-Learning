@@ -23,7 +23,7 @@ def batch_generator(batch_size=BATCH_SIZE):
     content = tf.decode_csv(value, record_defaults=record_defaults)
 
     # pack all 28 features into a tensor
-    features = tf.stack(content[1:N_FEATURES])
+    features = tf.stack(content[1:N_FEATURES+1])
 
     # assign the first column to label
     label = content[0]
