@@ -7,7 +7,6 @@ The problem at hand is a classification problem, where we need to distinguish be
 1. Signal process
 2. Background process
 <br>
-<br>
 The distinction of these two processes is of interest to us as the signal processes produce the Higgs bosons, also know as God Particles, which are of great interest to scientists, whereas the background processes do not produce any such exotic particles and are just considered noise. It’s interesting to know that detection of the signal processes is vital for progress in particle physics and hence classification of the same is crucial.
 <br>
 <br>
