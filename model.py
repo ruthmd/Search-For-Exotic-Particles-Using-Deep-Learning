@@ -1,6 +1,5 @@
 import os
 import tensorflow as tf
-from tqdm import tqdm
 from input import batch_generator, generate_batches
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -96,13 +95,15 @@ def train():
     forward_propagate() and defines a graph to compute loss using
     softmax_cross_entropy_with_logits and optimizes it using AdamOptimizer.
 
-    returns loss,optimizer as tensors.
+    returns loss, optimizer as tensors.
     '''
     hidden_layers, output_layer = neural_network_model()
+    
+    
     pred = forward_propagate(hidden_layers, output_layer)
-    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=pred))
-    optimizer = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE).minimize(loss)
-
+    loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=pred), name='loss')
+    # tf.summary.scalar('loss', loss)
+    optimizer = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE, name='optimizer').minimize(loss)
     return loss, optimizer
 
 
@@ -114,18 +115,21 @@ if __name__ == '__main__':
         data_batch, label_batch = batch_generator(TRAINING_FILE, batch_size=BATCH_SIZE)
         features, labels = generate_batches(data_batch, label_batch)
 
-        writer = tf.summary.FileWriter(LOG_DIR, sess.graph)
-
+        # merged_summary = tf.summary.merge_all()
+        writer = tf.summary.FileWriter(LOG_DIR)
+        writer.add_graph(sess.graph)
+        
         cost = 0
 
-        for i in tqdm(range(0, NUM_EPOCHS)):
+        for i in range(0, NUM_EPOCHS):
             cost = 0
             for j in range(0, NUM_BATCHES):
                 data_batch, label_batch = batch_generator(TRAINING_FILE, batch_size=BATCH_SIZE)
                 features, labels = generate_batches(data_batch, label_batch)
-                l, _  = sess.run([loss, optimizer], feed_dict={x:features, y:labels})
-                cost+=l
-                #print("Batch {} Loss : {}".format(j+1, l))
-            print("Epoch {} Loss : {}".format(i+1, cost))
-
+                s, _  = sess.run([loss, optimizer], feed_dict={x:features, y:labels})
+                cost += s
+                if(j%50==0):
+                   print("Batch {} Loss : {}".format(j, s))
+            # writer.add_summary(cost,i+1)
+            print("Epoch {}, cost {}".format(i,cost))
         writer.close()
