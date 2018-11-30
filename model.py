@@ -1,7 +1,10 @@
 import os
-import tensorflow as tf
-from input import batch_generator, generate_batches
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import numpy as np 
+import pandas as pd 
+from sklearn.model_selection import train_test_split
+
+np.random.seed(11)
+
 
 TRAINING_FILE = 'data/train.csv'
 TESTING_FILE = 'data/test.csv'
